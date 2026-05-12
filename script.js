@@ -1,5 +1,5 @@
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY"
+  apiKey: "AIzaSyC88XrgxqFSn_ltjPyy37UIK5uTGoIxiyE",
   authDomain: "cloudnotes-7060c.firebaseapp.com",
   projectId: "cloudnotes-7060c",
   storageBucket: "cloudnotes-7060c.firebasestorage.app",
@@ -8,49 +8,70 @@ const firebaseConfig = {
   measurementId: "G-CWPGQ7MZLS"
 };
 
+// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
+
+// Initialize Firestore
 const db = firebase.firestore();
 
+// Add Note
 function addNote() {
   let input = document.getElementById("noteInput");
   let note = input.value.trim();
 
-  if (note === "") return;
+  if (note === "") {
+    alert("Please enter a note");
+    return;
+  }
 
-  db.collection("notes").add({
-    text: note
-  })
-  .then(() => {
-    input.value = "";
-  })
-  .catch(error => {
-    console.error("Error adding note:", error);
-  });
+  db.collection("notes")
+    .add({
+      text: note,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    })
+    .then(() => {
+      input.value = "";
+    })
+    .catch(error => {
+      console.error("Error adding note:", error);
+    });
 }
 
+// Load Notes in Real-Time
 function loadNotes() {
   let list = document.getElementById("notesList");
 
-  db.collection("notes").onSnapshot(snapshot => {
-    list.innerHTML = "";
+  db.collection("notes")
+    .orderBy("createdAt", "desc")
+    .onSnapshot(snapshot => {
+      list.innerHTML = "";
 
-    snapshot.forEach(doc => {
-      let li = document.createElement("li");
-      li.innerHTML =
-        doc.data().text +
-        ` <button onclick="deleteNote('${doc.id}')">Delete</button>`;
-      list.appendChild(li);
+      snapshot.forEach(doc => {
+        let li = document.createElement("li");
+
+        li.innerHTML = `
+          ${doc.data().text}
+          <button onclick="deleteNote('${doc.id}')">
+            Delete
+          </button>
+        `;
+
+        list.appendChild(li);
+      });
+    }, error => {
+      console.error("Error loading notes:", error);
     });
-  }, error => {
-    console.error("Error loading notes:", error);
-  });
 }
 
+// Delete Note
 function deleteNote(id) {
-  db.collection("notes").doc(id).delete()
+  db.collection("notes")
+    .doc(id)
+    .delete()
     .catch(error => {
       console.error("Error deleting note:", error);
     });
 }
 
+// Load notes when page opens
 loadNotes();
