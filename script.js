@@ -1,5 +1,5 @@
 const firebaseConfig = {
-  apiKey: "AIzaSyC88XrgxqFSn_ltjPyy37UIK5uTGoIxiyE",
+  apiKey: "YOUR_API_KEY"
   authDomain: "cloudnotes-7060c.firebaseapp.com",
   projectId: "cloudnotes-7060c",
   storageBucket: "cloudnotes-7060c.firebasestorage.app",
