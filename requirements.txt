@@ -1,0 +1,3 @@
+# No backend dependencies required
+# Frontend project using HTML, CSS, JavaScript
+# Uses Firebase Firestore (cloud database)
